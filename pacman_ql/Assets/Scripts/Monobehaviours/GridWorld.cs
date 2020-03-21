@@ -49,7 +49,7 @@ public class GridWorld : MonoBehaviour
 
     private void InitSprites()
     {
-		_foodSprite = SpriteCreator.CreateSprite(foodTexture, foodTexture.width, Vector2.zero);
+		_foodSprite = SpriteCreator.CreateSprite(foodTexture, foodTexture.width*2, Vector2.zero);
 		_wallSprite = SpriteCreator.CreateSprite(wallTexture, wallTexture.width, Vector2.zero);
 	    _ghostOneSprite = SpriteCreator.CreateSprite(ghostOneTexture, ghostOneTexture.width, Vector2.zero);
 	    _ghostTwoSprite = SpriteCreator.CreateSprite(ghostTwoTexture, ghostOneTexture.width, Vector2.zero);
@@ -67,24 +67,24 @@ public class GridWorld : MonoBehaviour
     private void CreateBlock(int x, int y)
     {
 	    Color pixelColor = map.GetPixel(x, y);
-	    if (pixelColor == Color.red) CreateWall(x, y); // TODO: separate map label colors to a static class 
-	    else if (pixelColor == new Color(1.0f, 1.0f, 0.0f, 1.0f)) CreateSmallFood(x, y);
-	    else if (pixelColor == Color.blue) CreateBigFood(x, y);
+	    if (pixelColor == MapColors.WallColor) CreateWall(x, y);  
+	    else if (pixelColor == MapColors.SmallFoodColor) CreateSmallFood(x, y);
+	    else if (pixelColor == MapColors.BigFoodColor) CreateBigFood(x, y);
     }
 
     private void CreateBigFood(int x, int y)
     {
-		// TODO: create Big food
 		GameObject bigFoodGameObj = new GameObject($"big_food_{x}_{y}");
 		SpriteRenderer spriteRenderer = bigFoodGameObj.AddComponent<SpriteRenderer>();
 		spriteRenderer.sprite = _foodSprite;
 		spriteRenderer.sortingLayerID = SortingLayer.NameToID(SortingLayerNames.Food);
-		spriteRenderer.color = Color.gray;
+		spriteRenderer.color = Color.yellow;
 		Food food = bigFoodGameObj.AddComponent<Food>();
 		food.Coordinates = new Coordinates(x, y);
+		food.Type = FoodType.Big;
 		_foods.Add(food);
 		bigFoodGameObj.transform.SetParent(gameObject.transform);
-		bigFoodGameObj.transform.localPosition = new Vector3(food.Coordinates.X, food.Coordinates.Y, gameObject.transform.position.z);
+		bigFoodGameObj.transform.localPosition = new Vector3(food.Coordinates.X + 0.25f, food.Coordinates.Y + 0.25f, gameObject.transform.position.z);
 	}
 
     private void CreateSmallFood(int x, int y)
@@ -93,12 +93,13 @@ public class GridWorld : MonoBehaviour
 		SpriteRenderer spriteRenderer = smallFoodGameObj.AddComponent<SpriteRenderer>();
 		spriteRenderer.sprite = _foodSprite;
 		spriteRenderer.sortingLayerID = SortingLayer.NameToID(SortingLayerNames.Food);
-		spriteRenderer.color = Color.magenta;
+		spriteRenderer.color = Color.green;
 		Food food = smallFoodGameObj.AddComponent<Food>();
 		food.Coordinates = new Coordinates(x, y);
+		food.Type = FoodType.Small;
 		_foods.Add(food);
 		smallFoodGameObj.transform.SetParent(gameObject.transform);
-		smallFoodGameObj.transform.localPosition = new Vector3(food.Coordinates.X, food.Coordinates.Y, gameObject.transform.position.z);
+		smallFoodGameObj.transform.localPosition = new Vector3(food.Coordinates.X + 0.25f, food.Coordinates.Y +0.25f, gameObject.transform.position.z);
 	}
 
     private void CreateWall(int x, int y)
@@ -107,7 +108,7 @@ public class GridWorld : MonoBehaviour
 	    SpriteRenderer spriteRenderer = wallGameObj.AddComponent<SpriteRenderer>();
 	    spriteRenderer.sprite = _wallSprite;
 	    spriteRenderer.sortingLayerID = SortingLayer.NameToID(SortingLayerNames.Wall);
-	    spriteRenderer.color = Color.cyan;
+	    spriteRenderer.color = Color.white;
 	    Wall wall = wallGameObj.AddComponent<Wall>();
 	    wall.Coordinates = new Coordinates(x, y);
 	    _walls.Add(wall);
