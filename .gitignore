@@ -5,6 +5,7 @@
 [Bb]uild/
 [Bb]uilds/
 .vs/
+.meta
 Assets/AssetStoreTools*
 [Bb]in/
 _UpgradeReport_Files/
