@@ -229,7 +229,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1100967626}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 8, y: 1, z: -10}
+  m_LocalPosition: {x: 8, y: 1, z: 2}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
@@ -247,8 +247,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 68c0749d4fe53994082387fdfdb3236f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  map: {fileID: 2800000, guid: 61cb7e2b32dd8f444be6bc11b25023c5, type: 3}
+  map: {fileID: 2800000, guid: ace59d7e74a34fa4e89f4e838a17c0bc, type: 3}
   ghostOneTexture: {fileID: 2800000, guid: c8d3ceefa33fd8c47aaa71b363b3e2c8, type: 3}
   ghostTwoTexture: {fileID: 2800000, guid: 4aaf067498d3e9f458cc671813207f97, type: 3}
   pacmanTexture: {fileID: 2800000, guid: f5cbd033c2c05af4b8c5c4953edcc917, type: 3}
   wallTexture: {fileID: 2800000, guid: 6d3cc24d6b37f80418d28d0d2274ac50, type: 3}
+  foodTexture: {fileID: 2800000, guid: 6d3cc24d6b37f80418d28d0d2274ac50, type: 3}
