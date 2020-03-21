@@ -1,4 +1,5 @@
-﻿public class Coordinates
+﻿[System.Serializable]
+public class Coordinates
 {
 	private int _x;
 	private int _y;
