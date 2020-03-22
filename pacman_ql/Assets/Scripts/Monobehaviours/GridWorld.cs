@@ -6,7 +6,7 @@ using UnityEngine;
 public class GridWorld : MonoBehaviour
 {
 	public List<Wall> Walls { get => _walls; }
-
+	public WorldStaticEntity[,] WorldStaticEntities{ get => _wordlStaticEntities;}
 	#region SerializedFields
 
 	[SerializeField] private Texture2D map;
@@ -33,17 +33,25 @@ public class GridWorld : MonoBehaviour
 	private List<Wall> _walls;
     private List<Ghost> _ghosts;
     private List<Food> _foods;
-    
-    #endregion
+
+	#endregion
+
+	private WorldStaticEntity[,] _wordlStaticEntities;
 
     private void Start()
     {
 	    InitLists();
+		InitGrid();
 	    InitSprites();
 	    CreateGridWorld();
 		CreateGhosts();
 		Movement.GridWorld = this;
     }
+
+	private void InitGrid()
+	{
+		_wordlStaticEntities = new WorldStaticEntity[map.width, map.height];
+	}
 
 	private void Update()
 	{
@@ -109,6 +117,9 @@ public class GridWorld : MonoBehaviour
 		spriteRenderer.color = Color.yellow;
 		Food food = bigFoodGameObj.AddComponent<Food>();
 		food.Coordinates = new Coordinates(x, y);
+		WorldStaticEntity worldEntity = bigFoodGameObj.AddComponent<WorldStaticEntity>();
+		worldEntity.Type = WorldStaticEntityType.BigFood;
+		_wordlStaticEntities[x, y] = worldEntity;
 		food.Type = FoodType.Big;
 		_foods.Add(food);
 		bigFoodGameObj.transform.SetParent(gameObject.transform);
@@ -124,6 +135,9 @@ public class GridWorld : MonoBehaviour
 		spriteRenderer.color = Color.green;
 		Food food = smallFoodGameObj.AddComponent<Food>();
 		food.Coordinates = new Coordinates(x, y);
+		WorldStaticEntity worldEntity = smallFoodGameObj.AddComponent<WorldStaticEntity>();
+		worldEntity.Type = WorldStaticEntityType.SmallFood;
+		_wordlStaticEntities[x, y] = worldEntity;
 		food.Type = FoodType.Small;
 		_foods.Add(food);
 		smallFoodGameObj.transform.SetParent(gameObject.transform);
@@ -139,13 +153,15 @@ public class GridWorld : MonoBehaviour
 	    spriteRenderer.color = Color.white;
 	    Wall wall = wallGameObj.AddComponent<Wall>();
 	    wall.Coordinates = new Coordinates(x, y);
-	    _walls.Add(wall);
+		WorldStaticEntity worldEntity = wallGameObj.AddComponent<WorldStaticEntity>();
+		worldEntity.Type = WorldStaticEntityType.Wall;
+		_wordlStaticEntities[x, y] = worldEntity;
+		_walls.Add(wall);
 	    wallGameObj.transform.SetParent(gameObject.transform);
 	    wallGameObj.transform.localPosition = new Vector3(wall.Coordinates.X, wall.Coordinates.Y, gameObject.transform.position.z);
     }
 
 	private void CreateGhosts() {
-		//create ghosts
 		for (int i = 0; i < numberOfGhosts; i++)
 		{
 			Coordinates coordinates =  _foods[UnityEngine.Random.Range(0, _foods.Count)].Coordinates;
@@ -155,7 +171,6 @@ public class GridWorld : MonoBehaviour
 	
 	private void CreateGhost(Coordinates coordinates, int spriteIndex)
 	{
-		// TODO: create ghost
 		GameObject ghostGameObj = new GameObject($"ghost_{spriteIndex}");
 		SpriteRenderer spriteRenderer = ghostGameObj.AddComponent<SpriteRenderer>();
 		spriteRenderer.sprite = _ghostSprites[spriteIndex];
