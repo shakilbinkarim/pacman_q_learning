@@ -248,8 +248,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   map: {fileID: 2800000, guid: 76b9fc0d9c2300b428ac7c1044d00124, type: 3}
-  ghostOneTexture: {fileID: 2800000, guid: c8d3ceefa33fd8c47aaa71b363b3e2c8, type: 3}
-  ghostTwoTexture: {fileID: 2800000, guid: 4aaf067498d3e9f458cc671813207f97, type: 3}
   pacmanTexture: {fileID: 2800000, guid: f5cbd033c2c05af4b8c5c4953edcc917, type: 3}
   wallTexture: {fileID: 2800000, guid: 6d3cc24d6b37f80418d28d0d2274ac50, type: 3}
   foodTexture: {fileID: 2800000, guid: e76ac1b5300e25f4f9bbeed6068bc722, type: 3}
+  ghostTextures:
+  - {fileID: 2800000, guid: c8d3ceefa33fd8c47aaa71b363b3e2c8, type: 3}
+  - {fileID: 2800000, guid: 4aaf067498d3e9f458cc671813207f97, type: 3}
+  numberOfGhosts: 2

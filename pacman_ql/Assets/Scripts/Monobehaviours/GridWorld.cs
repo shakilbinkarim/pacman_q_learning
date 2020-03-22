@@ -1,34 +1,36 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using UnityEngine;
 
 
 public class GridWorld : MonoBehaviour
 {
+	public List<Wall> Walls { get => _walls; }
 
 	#region SerializedFields
 
 	[SerializeField] private Texture2D map;
-	[SerializeField] private Texture2D ghostOneTexture;
-	[SerializeField] private Texture2D ghostTwoTexture;
 	[SerializeField] private Texture2D pacmanTexture;
 	[SerializeField] private Texture2D wallTexture;
-	[SerializeField] private Texture2D foodTexture; // TODO: Add food texture
-
+	[SerializeField] private Texture2D foodTexture; 
+	[Header("Ghosts")] [Space(10)]
+	[SerializeField] private Texture2D[] ghostTextures;
+	[SerializeField] private int numberOfGhosts;
 	#endregion
 
 	#region Sprites
 
 	private Sprite _wallSprite;
-    private Sprite _ghostOneSprite;
-    private Sprite _ghostTwoSprite;
+    private Sprite[] _ghostSprites;
     private Sprite _pacmanSprite;
 	private Sprite _foodSprite;
-    
-    #endregion
 
-    #region WorldEntititesLists
+	#endregion
 
-    private List<Wall> _walls;
+	#region WorldEntititesLists
+
+	
+	private List<Wall> _walls;
     private List<Ghost> _ghosts;
     private List<Food> _foods;
     
@@ -39,9 +41,24 @@ public class GridWorld : MonoBehaviour
 	    InitLists();
 	    InitSprites();
 	    CreateGridWorld();
+		CreateGhosts();
+		Movement.GridWorld = this;
     }
 
-    private void InitLists()
+	private void Update()
+	{
+		UpdateGhosts();
+	}
+
+	private void UpdateGhosts()
+	{
+		foreach (Ghost ghost in _ghosts)
+		{
+			ghost.gameObject.transform.localPosition = new Vector2(ghost.Coordinates.X, ghost.Coordinates.Y); 
+		}
+	}
+
+	private void InitLists()
     {
 	    _walls = new List<Wall>();
 	    _ghosts = new List<Ghost>();
@@ -52,18 +69,28 @@ public class GridWorld : MonoBehaviour
     {
 		_foodSprite = SpriteCreator.CreateSprite(foodTexture, foodTexture.width*2, Vector2.zero);
 		_wallSprite = SpriteCreator.CreateSprite(wallTexture, wallTexture.width, Vector2.zero);
-	    _ghostOneSprite = SpriteCreator.CreateSprite(ghostOneTexture, ghostOneTexture.width, Vector2.zero);
-	    _ghostTwoSprite = SpriteCreator.CreateSprite(ghostTwoTexture, ghostOneTexture.width, Vector2.zero);
 	    _pacmanSprite = SpriteCreator.CreateSprite(pacmanTexture, pacmanTexture.width, Vector2.zero);
+		InitGhostSprites();
     }
-    
-    private void CreateGridWorld()
+
+	private void InitGhostSprites()
+	{
+		_ghostSprites = new Sprite[numberOfGhosts];
+		for (int i = 0; i < numberOfGhosts; i++)
+		{
+			if (ghostTextures.Length <= 0) return;
+			Texture2D  ghostTexture = ghostTextures[i%ghostTextures.Length];
+			_ghostSprites[i] = SpriteCreator.CreateSprite(ghostTexture, ghostTexture.width, Vector2.zero);
+		}
+	}
+
+	private void CreateGridWorld()
     {
 	    for (int i = 0; i < map.width; i++)
 	    {
 		    for (int j = 0; j < map.height; j++) CreateBlock(i, j);
 	    }
-    }
+	}
 
     private void CreateBlock(int x, int y)
     {
@@ -116,5 +143,29 @@ public class GridWorld : MonoBehaviour
 	    wallGameObj.transform.SetParent(gameObject.transform);
 	    wallGameObj.transform.localPosition = new Vector3(wall.Coordinates.X, wall.Coordinates.Y, gameObject.transform.position.z);
     }
+
+	private void CreateGhosts() {
+		//create ghosts
+		for (int i = 0; i < numberOfGhosts; i++)
+		{
+			Coordinates coordinates =  _foods[UnityEngine.Random.Range(0, _foods.Count)].Coordinates;
+			CreateGhost(coordinates, i);
+		}
+	}
+	
+	private void CreateGhost(Coordinates coordinates, int spriteIndex)
+	{
+		// TODO: create ghost
+		GameObject ghostGameObj = new GameObject($"ghost_{spriteIndex}");
+		SpriteRenderer spriteRenderer = ghostGameObj.AddComponent<SpriteRenderer>();
+		spriteRenderer.sprite = _ghostSprites[spriteIndex];
+		spriteRenderer.sortingLayerID = SortingLayer.NameToID(SortingLayerNames.Ghost);
+		spriteRenderer.color = Color.white;
+		Ghost ghost = ghostGameObj.AddComponent<Ghost>();
+		ghost.Coordinates = coordinates;
+		_ghosts.Add(ghost);
+		ghostGameObj.transform.SetParent(gameObject.transform);
+		ghostGameObj.transform.localPosition = new Vector3(ghost.Coordinates.X, ghost.Coordinates.Y, gameObject.transform.position.z);
+	}
     
 }
