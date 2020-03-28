@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Timers;
 using UnityEngine;
 
 
@@ -7,6 +8,9 @@ public class GridWorld : MonoBehaviour
 {
 	public List<Wall> Walls { get => _walls; }
 	public WorldStaticEntity[,] WorldStaticEntities { get => _wordlStaticEntities; }
+
+	public event Action MoveEntitiesEvent;
+
 	#region SerializedFields
 
 	[SerializeField] private Texture2D map;
@@ -39,6 +43,7 @@ public class GridWorld : MonoBehaviour
 	#endregion
 
 	private WorldStaticEntity[,] _wordlStaticEntities;
+	private Timer _timer;
 
 	private void Start()
 	{
@@ -49,8 +54,27 @@ public class GridWorld : MonoBehaviour
 		CreateGhosts();
 		CreatePacman();
 		Movement.GridWorld = this;
+
 	}
 
+	private void StartUpdateEntitiesTimer()
+	{
+		_timer = new Timer(1000);
+		_timer.Elapsed += UpdateEntitiesCoordinate;
+		_timer.Start();
+	}
+
+	private void UpdateEntitiesCoordinate(object sender, ElapsedEventArgs e) {
+		Debug.Log("Hey, hey hey");
+		MoveEntitiesEvent?.Invoke();
+	}
+
+	private void OnEnable() => StartUpdateEntitiesTimer();
+
+	private void OnDisable()
+	{
+		_timer.Elapsed -= UpdateEntitiesCoordinate;
+	}
 
 	private void InitGrid()
 	{
@@ -191,6 +215,7 @@ public class GridWorld : MonoBehaviour
 		spriteRenderer.color = Color.white;
 		Ghost ghost = ghostGameObj.AddComponent<Ghost>();
 		ghost.Coordinates = coordinates;
+		ghost.GridWorld = this;
 		_ghosts.Add(ghost);
 		ghostGameObj.transform.SetParent(gameObject.transform);
 		ghostGameObj.transform.localPosition = new Vector3(ghost.Coordinates.X, ghost.Coordinates.Y, gameObject.transform.position.z);
@@ -206,6 +231,7 @@ public class GridWorld : MonoBehaviour
 		spriteRenderer.sortingLayerID = SortingLayer.NameToID(SortingLayerNames.Pacman);
 		spriteRenderer.color = Color.white;
 		Pacman pacman = pacmanGameObj.AddComponent<Pacman>();
+		pacman.GridWorld = this;
 		_pacman = pacman;
 		Coordinates coordinates = CalcPacmanCoordinate();
 		pacman.Coordinates = coordinates;
