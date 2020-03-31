@@ -19,8 +19,7 @@ public class WorldStaticEntity : MonoBehaviour
         set => _type = value; 
     }
 
+    public Food FoodObject { get; set; }
+
     private WorldStaticEntityType _type;
-
-    ////private void Start() => _type = WorldStaticEntityType.Empty;
-
 }

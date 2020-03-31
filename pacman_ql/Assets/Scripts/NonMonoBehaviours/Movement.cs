@@ -17,7 +17,12 @@ public static class Movement
 	public static List<Moves> GetValidMoves(Coordinates coordinates)
 	{
 		List<Moves> moves = GetMovesList();
+#if true
 		GenerateValidMovesFromGrid(coordinates, moves);
+#else
+		GenerateValidMovesFromWallsList(coordinates, moves);
+#endif
+
 		return moves;
 	}
 
@@ -37,6 +42,24 @@ public static class Movement
 	private static bool CheckForWall(int x, int y, WorldStaticEntity[,] worldStaticEntities) => 
 		worldStaticEntities[x, y].Type == WorldStaticEntityType.Wall;
 
+	[Obsolete("GenerateValidMovesFromWallsList has been depricated.")]
+	private static void GenerateValidMovesFromWallsList(Coordinates coordinates, List<Moves> moves)
+	{
+
+		List<Wall> walls = GridWorld.Walls;
+		Debug.Log(walls.Count);
+		foreach (Wall wall in walls)
+		{
+			if (wall.Coordinates.X == coordinates.X + 1 && wall.Coordinates.Y == coordinates.Y)
+				moves.RemoveAll(move => move == Moves.Right);
+			if (wall.Coordinates.X == coordinates.X - 1 && wall.Coordinates.Y == coordinates.Y)
+				moves.RemoveAll(move => move == Moves.Left);
+			if (wall.Coordinates.Y == coordinates.Y + 1 && wall.Coordinates.X == coordinates.X)
+				moves.RemoveAll(move => move == Moves.Up);
+			if (wall.Coordinates.Y == coordinates.Y - 1 && wall.Coordinates.X == coordinates.X)
+				moves.RemoveAll(move => move == Moves.Down);
+		}
+	}
 
 	/// <summary>
 	/// Returns a list containaing all moves. Possible or otherwise.

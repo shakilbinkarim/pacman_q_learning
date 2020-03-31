@@ -43,4 +43,22 @@ public class Coordinates
 				break;
 		}
 	}
+
+	public static bool operator ==(Coordinates coord1, Coordinates coord2) => (coord1.X == coord2.X && coord1.Y == coord2.Y);
+	public static bool operator !=(Coordinates coord1, Coordinates coord2) => !(coord1.X == coord2.X && coord1.Y == coord2.Y);
+
+	public override bool Equals(object obj)
+	{
+		return base.Equals(obj);
+	}
+
+	public override int GetHashCode()
+	{
+		return base.GetHashCode();
+	}
+
+	public override string ToString()
+	{
+		return base.ToString();
+	}
 }
