@@ -47,6 +47,10 @@ public class Coordinates
 	public static bool operator ==(Coordinates coord1, Coordinates coord2) => (coord1.X == coord2.X && coord1.Y == coord2.Y);
 	public static bool operator !=(Coordinates coord1, Coordinates coord2) => !(coord1.X == coord2.X && coord1.Y == coord2.Y);
 
+	public static float operator -(Coordinates coord1, Coordinates coord2) {
+		return (coord1.X - coord2.X) + (coord1.Y - coord2.Y); 
+	}
+
 	public override bool Equals(object obj)
 	{
 		return base.Equals(obj);

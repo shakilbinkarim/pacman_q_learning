@@ -27,7 +27,6 @@ public class Pacman : MonoBehaviour
 	{
 		if (!_canMove) return;
 		_moves.Clear();
-		//_elapsedTime = 0.0f;
 		// Unity Random Range breaks Event action 
 		// Moves selectedMove = _moves[Random.Range(0, _moves.Count)];
 		_moves = Movement.GetValidMoves(Coordinates);

@@ -118,6 +118,7 @@ public class GridWorld : MonoBehaviour
 		{
 			food.SpriteRenderer.enabled = false;
 		}
+		RemoveFoodList.Clear();
 	}
 
 	private void UpdatePacmac()

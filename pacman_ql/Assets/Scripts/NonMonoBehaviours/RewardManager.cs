@@ -50,14 +50,10 @@ public class RewardManager : MonoBehaviour
 		if (staticEntity.Type == WorldStaticEntityType.Wall) return -100.0f; // Should not come here
 		else
 		{
-			//Food food = staticEntity.gameObject.GetComponent<Food>();
 			Food food = staticEntity.FoodObject;
 			if (food) {
 				float reward = food.Reward;
 				food.Type = FoodType.Empty;
-				//food.gameObject.SetActive(false);
-				//food.DisableSprite();
-				//food.gameObject.GetComponent<SpriteRenderer>().enabled = false;
 				GridWorld.RemoveFoodList.Add(food);
 				return reward; 
 			}
