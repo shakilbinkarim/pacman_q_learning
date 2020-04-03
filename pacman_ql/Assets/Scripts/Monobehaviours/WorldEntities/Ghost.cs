@@ -11,12 +11,12 @@ public class Ghost : MonoBehaviour
 
 	#endregion
 
-	private List<Moves> _moves;
+	private List<Move> _moves;
 	private bool _canMove = false;
 
 	private void Start()
 	{
-		_moves = new List<Moves>();
+		_moves = new List<Move>();
 		_canMove = true;
 		GridWorld.MoveEntitiesEvent += this.Move;
 	}
@@ -30,7 +30,7 @@ public class Ghost : MonoBehaviour
 		_moves = Movement.GetValidMoves(Coordinates);
 		System.Random random = new System.Random();
 		int randomIndex = random.Next(0, _moves.Count);
-		Moves selectedMove = _moves[randomIndex];
+		Move selectedMove = _moves[randomIndex];
 		Coordinates.Move(selectedMove);
 	}
 }

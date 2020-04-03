@@ -248,6 +248,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   rewards: {fileID: 11400000, guid: 64ff89bf81fe7e64491ec2824f12819d, type: 2}
+  hyperParameters: {fileID: 11400000, guid: 38fe5e14540581049ba178ecbe8a61a6, type: 2}
   map: {fileID: 2800000, guid: 76b9fc0d9c2300b428ac7c1044d00124, type: 3}
   pacmanTexture: {fileID: 2800000, guid: f5cbd033c2c05af4b8c5c4953edcc917, type: 3}
   wallTexture: {fileID: 2800000, guid: 6d3cc24d6b37f80418d28d0d2274ac50, type: 3}

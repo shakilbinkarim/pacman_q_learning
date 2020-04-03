@@ -12,5 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a73b4c491e4f12b48bf1195a1bfe5346, type: 3}
   m_Name: HyperParameters
   m_EditorClassIdentifier: 
-  learningRate: 0
-  discountRate: 0
+  epsilon: 1
+  epsilonDecayRate: 0.2
+  learningRate: 0.1
+  discountRate: 0.3

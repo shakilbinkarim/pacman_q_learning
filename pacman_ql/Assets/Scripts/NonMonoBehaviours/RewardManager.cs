@@ -45,7 +45,7 @@ public class RewardManager : MonoBehaviour
 	/// </summary>
 	private float CheckFoodOverlap()
 	{
-		WorldStaticEntity[,] worldStaticEntities = GridWorld.WorldStaticEntities;
+		WorldStationaryEntity[,] worldStaticEntities = GridWorld.WorldStationaryEntities;
 		var staticEntity = worldStaticEntities[_pacmanCoordinates.X, _pacmanCoordinates.Y];
 		if (staticEntity.Type == WorldStaticEntityType.Wall) return -100.0f; // Should not come here
 		else

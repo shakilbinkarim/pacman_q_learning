@@ -12,7 +12,7 @@ public enum WorldStaticEntityType
 }
 
 
-public class WorldStaticEntity : MonoBehaviour
+public class WorldStationaryEntity : MonoBehaviour
 {
     public WorldStaticEntityType Type { 
         get => _type; 

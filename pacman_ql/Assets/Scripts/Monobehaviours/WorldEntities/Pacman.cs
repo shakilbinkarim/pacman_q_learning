@@ -10,13 +10,13 @@ public class Pacman : MonoBehaviour
 
 	#endregion
 
-	private List<Moves> _moves;
+	private List<Move> _moves;
 	private GridWorld _gridWorld;
 	private bool _canMove = false;
 
 	private void Start()
 	{
-		_moves = new List<Moves>();
+		_moves = new List<Move>();
 		_canMove = true;
 		GridWorld.MoveEntitiesEvent += this.Move;
 	}
@@ -29,10 +29,11 @@ public class Pacman : MonoBehaviour
 		_moves.Clear();
 		// Unity Random Range breaks Event action 
 		// Moves selectedMove = _moves[Random.Range(0, _moves.Count)];
-		_moves = Movement.GetValidMoves(Coordinates);
-		System.Random random = new System.Random();
-		int randomIndex = random.Next(0, _moves.Count);
-		Moves selectedMove = _moves[randomIndex];
+		//_moves = Movement.GetValidMoves(Coordinates);
+		//System.Random random = new System.Random();
+		//int randomIndex = random.Next(0, _moves.Count);
+		//Move selectedMove = _moves[randomIndex];
+		Move selectedMove = GridWorld.Qfunction.ActionSelector(Coordinates, _gridWorld.GetGhostCoordinates());
 		Coordinates.Move(selectedMove);
 	}
 

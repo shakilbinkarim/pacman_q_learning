@@ -11,8 +11,7 @@ public class GridWorld : MonoBehaviour
 	public List<Wall> Walls { get => _walls; }
 	public List<Ghost> Ghosts { get => _ghosts; }
 	public Pacman Pacman => _pacman;
-	public WorldStaticEntity[,] WorldStaticEntities { get => _wordlStaticEntities; }
-	
+	public WorldStationaryEntity[,] WorldStationaryEntities { get => _wordlStaticEntities; }
 	#endregion
 
 	#region EventActions
@@ -22,10 +21,13 @@ public class GridWorld : MonoBehaviour
 	#endregion
 	
 	public static Rewards Rewards;
+	public static HyperParameters HyperParameters;
+	public static Qfunction Qfunction;
 
 	#region SerializedFields
 
 	[SerializeField] Rewards rewards;
+	[SerializeField] HyperParameters hyperParameters;
 	[SerializeField] private Texture2D map;
 	[SerializeField] private Texture2D pacmanTexture;
 	[SerializeField] private Texture2D wallTexture;
@@ -55,11 +57,13 @@ public class GridWorld : MonoBehaviour
 
 	#endregion
 
-	private WorldStaticEntity[,] _wordlStaticEntities;
+	private WorldStationaryEntity[,] _wordlStaticEntities;
 	private Timer _timer;
 
 	private void Start()
 	{
+		Rewards = rewards;
+		HyperParameters = hyperParameters;
 		InitLists();
 		InitGrid();
 		InitSprites();
@@ -68,8 +72,19 @@ public class GridWorld : MonoBehaviour
 		CreatePacman();
 		Movement.GridWorld = this;
 		RewardManager.Instance.GridWorld = this;
-		Rewards = rewards;
+		Qfunction = new Qfunction(_pacman.Coordinates, GetGhostCoordinates(), WorldStationaryEntities);
 	}
+
+	public List<Coordinates> GetGhostCoordinates() 
+	{
+		List<Coordinates> ghostCoordinates = new List<Coordinates>();
+		foreach (Ghost ghost in _ghosts)
+		{
+			ghostCoordinates.Add(ghost.Coordinates);
+		}
+		return ghostCoordinates;
+	}
+
 
 	private void StartUpdateEntitiesTimer()
 	{
@@ -82,7 +97,8 @@ public class GridWorld : MonoBehaviour
 	private void UpdateEntitiesCoordinate(object sender, ElapsedEventArgs e) {
 		MoveEntitiesEvent?.Invoke();
 		RewardManager.Instance.CalculateCurrentReward(_pacman.Coordinates);
-		Debug.Log(RewardManager.Instance.CurrentReward);
+		Qfunction.UpdateQValue(_pacman.Coordinates, GetGhostCoordinates());
+		//Debug.Log(RewardManager.Instance.CurrentReward);
 	}
 
 	private void OnEnable() => StartUpdateEntitiesTimer();
@@ -94,7 +110,7 @@ public class GridWorld : MonoBehaviour
 
 	private void InitGrid()
 	{
-		_wordlStaticEntities = new WorldStaticEntity[map.width, map.height];
+		_wordlStaticEntities = new WorldStationaryEntity[map.width, map.height];
 	}
 
 	private void InitLists()
@@ -109,7 +125,7 @@ public class GridWorld : MonoBehaviour
 	{
 		RemoveFood();
 		UpdateGhosts();
-		UpdatePacmac();
+		UpdatePacman();
 	}
 
 	private void RemoveFood()
@@ -121,7 +137,7 @@ public class GridWorld : MonoBehaviour
 		RemoveFoodList.Clear();
 	}
 
-	private void UpdatePacmac()
+	private void UpdatePacman()
 	{
 		_pacman.gameObject.transform.localPosition = new Vector2(_pacman.Coordinates.X, _pacman.Coordinates.Y);
 	}
@@ -177,7 +193,7 @@ public class GridWorld : MonoBehaviour
 		spriteRenderer.color = Color.white;
 		Wall wall = wallGameObj.AddComponent<Wall>();
 		wall.Coordinates = new Coordinates(x, y);
-		WorldStaticEntity worldStaticEntity = wallGameObj.AddComponent<WorldStaticEntity>();
+		WorldStationaryEntity worldStaticEntity = wallGameObj.AddComponent<WorldStationaryEntity>();
 		worldStaticEntity.Type = WorldStaticEntityType.Wall;
 		_wordlStaticEntities[x, y] = worldStaticEntity;
 
@@ -197,7 +213,7 @@ public class GridWorld : MonoBehaviour
 		Food food = bigFoodGameObj.AddComponent<Food>();
 		food.Coordinates = new Coordinates(x, y);
 		food.SpriteRenderer = spriteRenderer;
-		WorldStaticEntity worldEntity = bigFoodGameObj.AddComponent<WorldStaticEntity>();
+		WorldStationaryEntity worldEntity = bigFoodGameObj.AddComponent<WorldStationaryEntity>();
 		worldEntity.Type = WorldStaticEntityType.BigFood;
 		worldEntity.FoodObject = food;
 		_wordlStaticEntities[x, y] = worldEntity;
@@ -217,7 +233,7 @@ public class GridWorld : MonoBehaviour
 		Food food = smallFoodGameObj.AddComponent<Food>();
 		food.Coordinates = new Coordinates(x, y);
 		food.SpriteRenderer = spriteRenderer;
-		WorldStaticEntity worldEntity = smallFoodGameObj.AddComponent<WorldStaticEntity>();
+		WorldStationaryEntity worldEntity = smallFoodGameObj.AddComponent<WorldStationaryEntity>();
 		worldEntity.Type = WorldStaticEntityType.SmallFood;
 		worldEntity.FoodObject = food;
 		_wordlStaticEntities[x, y] = worldEntity;

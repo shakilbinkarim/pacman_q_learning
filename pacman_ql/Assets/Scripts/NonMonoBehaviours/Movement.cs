@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public enum Moves
+public enum Move
 {
 	Up = 0,
 	Down = 1,
@@ -14,9 +14,9 @@ public static class Movement
 {
 	public static GridWorld GridWorld;
 
-	public static List<Moves> GetValidMoves(Coordinates coordinates)
+	public static List<Move> GetValidMoves(Coordinates coordinates)
 	{
-		List<Moves> moves = GetMovesList();
+		List<Move> moves = GetMovesList();
 #if true
 		GenerateValidMovesFromGrid(coordinates, moves);
 #else
@@ -26,24 +26,24 @@ public static class Movement
 		return moves;
 	}
 
-	private static void GenerateValidMovesFromGrid(Coordinates coordinates, List<Moves> moves) 
+	private static void GenerateValidMovesFromGrid(Coordinates coordinates, List<Move> moves) 
 	{
-		WorldStaticEntity[,] worldStaticEntities = GridWorld.WorldStaticEntities;
+		WorldStationaryEntity[,] worldStaticEntities = GridWorld.WorldStationaryEntities;
 		if (CheckForWall(coordinates.X + 1, coordinates.Y, worldStaticEntities))
-			moves.RemoveAll(move => move == Moves.Right);
+			moves.RemoveAll(move => move == Move.Right);
 		if (CheckForWall(coordinates.X - 1, coordinates.Y, worldStaticEntities))
-			moves.RemoveAll(move => move == Moves.Left);
+			moves.RemoveAll(move => move == Move.Left);
 		if (CheckForWall(coordinates.X, coordinates.Y + 1, worldStaticEntities))
-			moves.RemoveAll(move => move == Moves.Up);
+			moves.RemoveAll(move => move == Move.Up);
 		if (CheckForWall(coordinates.X, coordinates.Y - 1, worldStaticEntities))
-			moves.RemoveAll(move => move == Moves.Down);
+			moves.RemoveAll(move => move == Move.Down);
 	}
 
-	private static bool CheckForWall(int x, int y, WorldStaticEntity[,] worldStaticEntities) => 
+	private static bool CheckForWall(int x, int y, WorldStationaryEntity[,] worldStaticEntities) => 
 		worldStaticEntities[x, y].Type == WorldStaticEntityType.Wall;
 
 	[Obsolete("GenerateValidMovesFromWallsList has been depricated.")]
-	private static void GenerateValidMovesFromWallsList(Coordinates coordinates, List<Moves> moves)
+	private static void GenerateValidMovesFromWallsList(Coordinates coordinates, List<Move> moves)
 	{
 
 		List<Wall> walls = GridWorld.Walls;
@@ -51,13 +51,13 @@ public static class Movement
 		foreach (Wall wall in walls)
 		{
 			if (wall.Coordinates.X == coordinates.X + 1 && wall.Coordinates.Y == coordinates.Y)
-				moves.RemoveAll(move => move == Moves.Right);
+				moves.RemoveAll(move => move == Move.Right);
 			if (wall.Coordinates.X == coordinates.X - 1 && wall.Coordinates.Y == coordinates.Y)
-				moves.RemoveAll(move => move == Moves.Left);
+				moves.RemoveAll(move => move == Move.Left);
 			if (wall.Coordinates.Y == coordinates.Y + 1 && wall.Coordinates.X == coordinates.X)
-				moves.RemoveAll(move => move == Moves.Up);
+				moves.RemoveAll(move => move == Move.Up);
 			if (wall.Coordinates.Y == coordinates.Y - 1 && wall.Coordinates.X == coordinates.X)
-				moves.RemoveAll(move => move == Moves.Down);
+				moves.RemoveAll(move => move == Move.Down);
 		}
 	}
 
@@ -65,13 +65,13 @@ public static class Movement
 	/// Returns a list containaing all moves. Possible or otherwise.
 	/// </summary>
 	/// <returns></returns>
-	private static List<Moves> GetMovesList()
+	private static List<Move> GetMovesList()
 	{
-		List<Moves> moves = new List<Moves>();
-		moves.Add(Moves.Up);
-		moves.Add(Moves.Down);
-		moves.Add(Moves.Right);
-		moves.Add(Moves.Left);
+		List<Move> moves = new List<Move>();
+		moves.Add(Move.Up);
+		moves.Add(Move.Down);
+		moves.Add(Move.Right);
+		moves.Add(Move.Left);
 		return moves;
 	}
 

@@ -23,20 +23,20 @@ public class Coordinates
 		Y = y;
 	}
 
-	public void Move(Moves selectedMove)
+	public void Move(Move selectedMove)
 	{
 		switch (selectedMove)
 		{
-			case Moves.Up:
+			case global::Move.Up:
 				Y += 1;
 				break;
-			case Moves.Down:
+			case global::Move.Down:
 				Y -= 1;
 				break;
-			case Moves.Left:
+			case global::Move.Left:
 				X -= 1;
 				break;
-			case Moves.Right:
+			case global::Move.Right:
 				X += 1;
 				break;
 			default:
