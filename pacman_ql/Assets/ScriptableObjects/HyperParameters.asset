@@ -13,6 +13,6 @@ MonoBehaviour:
   m_Name: HyperParameters
   m_EditorClassIdentifier: 
   epsilon: 1
-  epsilonDecayRate: 0.2
+  epsilonDecayRate: 0.7
   learningRate: 0.1
   discountRate: 0.3

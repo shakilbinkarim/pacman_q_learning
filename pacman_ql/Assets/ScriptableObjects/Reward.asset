@@ -15,4 +15,4 @@ MonoBehaviour:
   ghostReward: -20
   normalFoodReward: 1
   bigFoodtReward: 10
-  emptyFoodReward: -1
+  emptyFoodReward: -100

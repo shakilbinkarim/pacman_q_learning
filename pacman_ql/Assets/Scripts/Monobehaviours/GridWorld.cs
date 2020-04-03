@@ -88,7 +88,7 @@ public class GridWorld : MonoBehaviour
 
 	private void StartUpdateEntitiesTimer()
 	{
-		_timer = new Timer(500);
+		_timer = new Timer(50);
 		_timer.AutoReset = true;
 		_timer.Elapsed += UpdateEntitiesCoordinate;
 		_timer.Start();

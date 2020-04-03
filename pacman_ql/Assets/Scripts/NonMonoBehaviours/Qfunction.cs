@@ -18,7 +18,6 @@ public class QState
     }
 }
 
-
 public class Qfunction
 {
     #region Weights
@@ -34,14 +33,16 @@ public class Qfunction
     private float _discountRate;
     private float _epsilon;
     private float _epsilonDecayRate;
-    #endregion
+	#endregion
 
-    private float _prevQValue;
+	#region local Variables
+	private float _prevQValue;
     private float _maxDistance;
     private QState _prevQState;
     private WorldStationaryEntity[,] _worldStationaryEntities;
+	#endregion
 
-    public Qfunction(Coordinates pacmanCoordinates, List<Coordinates> ghostCoordinates, WorldStationaryEntity[,] worldStationaryEntities)
+	public Qfunction(Coordinates pacmanCoordinates, List<Coordinates> ghostCoordinates, WorldStationaryEntity[,] worldStationaryEntities)
     {
         _wDistToFood = 0;
         _wDistToGhost1 = 0;
@@ -70,6 +71,7 @@ public class Qfunction
     {
         QState newQState = new QState(pacmanCoordinates, ghostCoordinates, FindNearestFood(pacmanCoordinates));
         float newQValue = _discountRate*CalcQValue(newQState);
+        Debug.Log(RewardManager.Instance.CurrentReward);
         float qDifference = _learningRate*(newQValue + RewardManager.Instance.CurrentReward - _prevQValue);
         _wDistToGhost1 += qDifference * DistanceToGhost(_prevQState.PacmanCoordinates, _prevQState.GhostCoordinates[0]);
         _wDistToGhost2 += qDifference * DistanceToGhost(_prevQState.PacmanCoordinates, _prevQState.GhostCoordinates[1]);
@@ -105,7 +107,7 @@ public class Qfunction
         while (frontier.Count != 0)
         {
             rootNodeCoord = frontier.Dequeue();
-            Coordinates exploreNodeCoord = new Coordinates(rootNodeCoord.X, rootNodeCoord.Y);
+            Coordinates exploreNodeCoord = new Coordinates(0, 0);
             List<Move> moveList = Movement.GetValidMoves(rootNodeCoord);
             foreach (Move move in moveList)
             {
@@ -114,13 +116,13 @@ public class Qfunction
                 exploreNodeCoord.Y = rootNodeCoord.Y;
                 exploreNodeCoord.Move(move);
                 bool isNodeVisited = visitedNodes[exploreNodeCoord.X, exploreNodeCoord.Y];
-                if (_worldStationaryEntities[exploreNodeCoord.X, exploreNodeCoord.Y].Type == WorldStaticEntityType.Empty && isNodeVisited == false)
+                if (_worldStationaryEntities[exploreNodeCoord.X, exploreNodeCoord.Y].Type == WorldStaticEntityType.Empty)
                 {
-                    frontier.Enqueue(rootNodeCoord);
+                    if (isNodeVisited == false)
+                        frontier.Enqueue(exploreNodeCoord);
                     visitedNodes[exploreNodeCoord.X, exploreNodeCoord.Y] = true;
                 } 
-                else { return exploreNodeCoord; }
-                    
+                else  return exploreNodeCoord; 
             }
 
         }
@@ -133,37 +135,43 @@ public class Qfunction
         bool set = false;
         List<Move> moveList = Movement.GetValidMoves(pacmanCoordinates);
         Move selectedMove = moveList[0];
-        float rand = (float)random.NextDouble();
+        float rand = (float)random.Next(0, 100)/100.0f;
         if (_epsilon > rand)
         {
+            Debug.Log("Random action");
             set = true;
             int randomIndex = random.Next(0, moveList.Count);
             selectedMove = moveList[randomIndex];
-            return selectedMove;
         }
-        Coordinates nearestFood = FindNearestFood(pacmanCoordinates);
-        QState tempQState = new QState(pacmanCoordinates, ghostCoordinates, nearestFood);
-        float qValue = 0.0f;
-        Coordinates pacmanCoordCopy = new Coordinates(pacmanCoordinates.X, pacmanCoordinates.Y);
-        foreach (Move move in moveList)
+        else 
         {
-            pacmanCoordCopy.Move(move);
-            nearestFood = FindNearestFood(pacmanCoordinates);
-            tempQState.SetState(pacmanCoordCopy, ghostCoordinates, nearestFood);
-            float tempQValue = CalcQValue(tempQState);
-            if (qValue < tempQValue)
+            Coordinates nearestFood = FindNearestFood(pacmanCoordinates);
+            QState tempQState = new QState(pacmanCoordinates, ghostCoordinates, nearestFood);
+            float qValue = CalcQValue(tempQState);
+            Coordinates pacmanCoordCopy = new Coordinates(pacmanCoordinates.X, pacmanCoordinates.Y);
+        
+            foreach (Move move in moveList)
             {
-                qValue = tempQValue;
-                selectedMove = move;
-                set = true;
+                pacmanCoordCopy.Move(move);
+                nearestFood = FindNearestFood(pacmanCoordinates);
+                if (nearestFood - pacmanCoordinates == 0) Debug.LogError("pacman");
+                tempQState.SetState(pacmanCoordCopy, ghostCoordinates, nearestFood);
+                float tempQValue = CalcQValue(tempQState);
+                if (qValue <= tempQValue)
+                {
+                    qValue = tempQValue;
+                    selectedMove = move;
+                    set = true;
+                    Debug.Log("Max Action");
+                }
+                pacmanCoordCopy.X = pacmanCoordinates.X;
+                pacmanCoordCopy.Y = pacmanCoordinates.Y;
             }
-            pacmanCoordCopy.X = pacmanCoordinates.X;
-            pacmanCoordCopy.Y = pacmanCoordinates.Y;
         }
         if (set) 
             Debug.Log($"set {selectedMove}");
         else
-            Debug.LogError("never Set an action BITCH!");
+            Debug.LogWarning("never Set an action BITCH!");
         return selectedMove;
     }
 
